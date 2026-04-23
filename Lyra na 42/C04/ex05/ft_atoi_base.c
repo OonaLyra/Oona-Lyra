@@ -1,18 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putnbr_base.c                                   :+:      :+:    :+:   */
+/*   ft_atoi_base.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: llyra-li <llyra-li@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/04/18 18:40:20 by llyra-li          #+#    #+#             */
-/*   Updated: 2026/04/19 16:50:37 by llyra-li         ###   ########.fr       */
+/*   Created: 2026/04/19 16:51:44 by llyra-li          #+#    #+#             */
+/*   Updated: 2026/04/19 17:24:51 by llyra-li         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
+int	obt_value(char c, char *base)
+{
+	int	i;
 
-int	is_base_valid(char *base)
+	i = 0;
+	while (base[i])
+	{
+		if (base[i] == c)
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+int	baselen(char *base)
 {
 	int	i;
 	int	j;
@@ -34,23 +46,29 @@ int	is_base_valid(char *base)
 	return (i);
 }
 
-void	ft_putnbr_base(int nbr, char *base)
+int	ft_atoi_base(char *str, char *base)
 {
-	int		baselen;
-	long	n;
+	int	i;
+	int	nb;
+	int	sinal;
 
-	baselen = is_base_valid(base);
-	if (baselen < 2)
+	sinal = 1;
+	nb = 0;
+	i = 0;
+	while (base[i])
+		i++;
+	while (*str == ' ' || (*str >= 9 && *str <= 13))
+		str++;
+	while (*str == '-' || *str == '+')
 	{
-		return ;
+		if (*str == '-')
+			sinal *= -1;
+		str++;
 	}
-	n = nbr;
-	if (n < 0)
+	while (obt_value(*str, base) != -1)
 	{
-		write(1, "-", 1);
-		n = -n;
+		nb = (nb * baselen(base)) + obt_value(*str, base);
+		str++;
 	}
-	if (n >= baselen)
-		ft_putnbr_base(n / baselen, base);
-	write(1, &base[n % baselen], 1);
+	return (nb * sinal);
 }
