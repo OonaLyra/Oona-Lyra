@@ -23,13 +23,13 @@ char	*mapread(int fd_map)
 	char	*buffer;
 	int		bytes;
 
-	buffer = malloc(131072 * sizeof (char));
+	buffer = malloc(1048576 * sizeof (char));
 	if (!buffer)
 	{
 		write(1, "map error\n", 10);
 		return (0);
 	}
-	bytes = read(fd_map, buffer, 131071);
+	bytes = read(fd_map, buffer, 1048575);
 	if (bytes < 0)
 	{
 		free(buffer);

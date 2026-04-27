@@ -12,7 +12,6 @@
 
 #include <unistd.h>
 #include <fcntl.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include "bsq.h"
 
@@ -28,22 +27,30 @@ char	**make_grid(int rows, int cols, char *map)
 	char	**grid;
 	int		i;
 	int		j;
-	int		offset;
+	char	*curr;
 
-	offset = 0;
-	while (map[offset] != '\n')
-		offset++;
+	curr = map;
+	while (*curr && *curr != '\n')
+		curr++;
+	if (*curr == '\n')
+		curr++;
 	grid = malloc(rows * sizeof (char *));
 	i = 0;
+	/* In theory it should be working now, without segfauls since
+	we've not only increased the buffer size from 128kb to 1mb but also
+	we're trying another way to work with the offset on the lines and cols;*/
 	while (i < rows)
 	{
 		j = 0;
 		grid[i] = malloc(cols * sizeof (char));
-		while (j < cols)
+		while (j < cols && *curr && *curr != '\n')
 		{
-			grid[i][j] = map[(offset + 1) + (i * (cols + 1)) + j];
+			grid[i][j] = *curr;
+			curr++;
 			j++;
 		}
+		if (*curr == '\n')
+			curr++;
 		i++;
 	}
 	return (grid);
@@ -83,23 +90,20 @@ void	fill_square(int *start, int size, t_map *map)
 
 int	valid_square(int row, int col, t_map *map)
 {
-	int		size;
-	int		i;
+	int	size;
+	int	i;
 
 	size = 1;
-	while ((row + size - 1) < (map->rows) && ((col + size - 1) < (map->cols)))
+	while ((row + size) < map->rows && (col + size) < map->cols)
 	{
 		i = 0;
-		while (i < size)
+		while (i <= size)
 		{
-			if ((map->grid)[row + i][col] == (map->obstacle))
-				return (size);
-			if ((map->grid)[row][col + i] == (map->obstacle))
+			if (map->grid[row + size][col + i] == map->obstacle ||
+				map->grid[row + i][col + size] == map->obstacle)
 				return (size);
 			i++;
 		}
-		if ((map->grid)[row + size - 1][col + size - 1] == (map->obstacle))
-			return (size);
 		size++;
 	}
 	return (size);
@@ -114,6 +118,8 @@ void	solver(t_map *map)
 	int	cur_square;
 
 	max_square = 0;
+	max_start[0] = 0;
+	max_start[1] = 0;
 	row = 0;
 	while (row < map->rows)
 	{

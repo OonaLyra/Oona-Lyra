@@ -31,10 +31,15 @@ int	validate_map(char *mapbuffer, t_map *map)
 	int		current_leng;
 	int		row_count;
 	char	*s;
+	int		first_len;
 
+	first_len = first_strlen(mapbuffer);
 	current_leng = 0;
 	row_count = 0;
-	s = mapbuffer + first_strlen(mapbuffer) + 1;
+	 if (mapbuffer[first_len] == '\0') // Se não tem nem a primeira linha completa
+        return (1);
+        
+	s = mapbuffer + first_len + 1;
 	while (*s)
 	{
 		if (*s == '\n')

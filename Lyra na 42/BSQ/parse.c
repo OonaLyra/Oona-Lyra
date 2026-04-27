@@ -62,17 +62,17 @@ because they will be the map subtitles.*/
 
 char	*firstlineparse(char *map)
 {
-	int		i;
 	int		limit;
 	char	*subs;
 
-	i = 0;
 	limit = 0;
-	subs = malloc(4);
-	if (!subs)
-		return (0);
 	while (map[limit] != '\n')
 		limit++;
+	if (limit < 4)
+		return (NULL);
+	subs = malloc(4);
+	if (!subs)
+		return (NULL);
 	subs[0] = map[limit - 3];
 	subs[1] = map[limit - 2];
 	subs[2] = map[limit - 1];
