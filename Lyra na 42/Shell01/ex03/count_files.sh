@@ -1,1 +1,0 @@
-find . -depth | wc -l
